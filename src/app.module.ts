@@ -3,7 +3,7 @@ import { ConfigModule } from '@nestjs/config';
 import { SequelizeModule } from '@nestjs/sequelize';
 import { AuthModule } from './modules/auth/auth.module';
 import { Auth } from './modules/auth/entities/auth.entity';
-// import { ArticleModule } from './article/article.module';
+import { ArticleModule } from './article/article.module';
 
 @Module({
   imports: [
@@ -20,7 +20,7 @@ import { Auth } from './modules/auth/entities/auth.entity';
      logging: false
     }),
     AuthModule,
-    // ArticleModule
+    ArticleModule
   ],
   controllers: [],
   providers: [],

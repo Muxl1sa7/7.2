@@ -1,8 +1,7 @@
 import { ApiProperty } from "@nestjs/swagger";
 import { IsEmail, IsNotEmpty, isNotEmpty, Matches, MaxLength, MIN_LENGTH, MinLength } from "class-validator";
-import { IsString } from "class-validator/types/decorator/typechecker/IsString";
 
-export class CreateAuthDto {
+export class loginDto {
     @IsString()
     @MinLength(3,{message:"Kamida 3 ta harf bo'lsin"})
     @MaxLength(50)
