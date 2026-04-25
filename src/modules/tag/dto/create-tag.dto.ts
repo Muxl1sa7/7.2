@@ -3,7 +3,7 @@ import { isEmail, isEmpty, isString } from "class-validator";
 
 export class createTagDto{
     @isString()
-    @isEmpty()
+    @isNotEmpty()
     @ApiProperty({defould:'HTML'})
     name!:string;
 

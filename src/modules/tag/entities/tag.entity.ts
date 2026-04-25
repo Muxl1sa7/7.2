@@ -5,7 +5,7 @@ import { Column } from "typeorm";
 
 @Entity({name:"tag"})
 export class Tag extends BaseEntity{
-    @Column()
+    @Column({unique:true})
     name:"string"
 
      @ManyToMany(()=>Auth,(user)=>user.tags{nullable:false,cascade:true})

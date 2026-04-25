@@ -15,12 +15,27 @@ const config =new DocumentBuilder()
 .setTitle("Article project ")
 .setDescription("Article project for lesson")
 .setVersion("1.0.0")
-.build()
+.addBearerAuth(
+  {
+type:"http",
+scheme:"bearer",
+bearerFormat:"JWT",
+name:"JWT",
+description:"Enter JWT token",
+in:"header"
+  },
+  "JWT-auth",
+)
+.build();
 
 const document = SwaggerModule.createDocument(app, config)
-SwaggerModule.setup("api-docs", app, document)
+SwaggerModule.setup("api-docs", app, document,{
+  swaggerOptions:{
+    persistAuthorization:true
+  },
+});
 
-app.use("/uploads", express.static)
+app.use("/uploads", express.static("uploads"))
 
   const PORT = process.env.PORT || 3000;
   await app.listen(PORT, () => {

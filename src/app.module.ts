@@ -4,6 +4,7 @@ import { SequelizeModule } from '@nestjs/sequelize';
 import { AuthModule } from './modules/auth/auth.module';
 import { Auth } from './modules/auth/entities/auth.entity';
 import { ArticleModule } from './article/article.module';
+import { Article } from './modules/article/entities/article.entity';
 
 @Module({
   imports: [
@@ -15,12 +16,13 @@ import { ArticleModule } from './article/article.module';
       username: "postgres",
       database:String(process.env.DB_NAME as string),
       password: String(process.env.DB_PASSWORD as string),
-      entities:[Auth],
+      entities:[Auth,Article,Tag],
      synchronize: true,
      logging: false
     }),
     AuthModule,
-    ArticleModule
+    ArticleModule,
+    TagModule
   ],
   controllers: [],
   providers: [],

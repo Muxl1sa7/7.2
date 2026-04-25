@@ -1,4 +1,4 @@
-import { Controller, Get, Post, Body, Patch, Param, Delete, HttpCode, UseInterceptors, UseGuards } from '@nestjs/common';
+import { Controller, Get, Post, Body, Patch, Param, Delete, HttpCode, UseInterceptors, UseGuards, UploadedFile } from '@nestjs/common';
 import { CreateArticleDto } from './dto/create-article.dto';
 import { UpdateArticleDto } from './dto/update-article.dto';
 import { ApiBearerAuth, ApiBody, ApiInternalServerErrorResponse, ApiNotFoundResponse, ApiOkResponse } from '@nestjs/swagger';
@@ -36,8 +36,8 @@ export class ArticleController {
     })
   })
 )
-create(@Body() createArticleDto: CreateArticleDto) {
-  return this.articleService.create(createArticleDto);
+create(@Body() createArticleDto: CreateArticleDto, @UploadedFile() file:ExpressAdapter.Multer.file, @Req()req) {
+  return this.articleService.create(createArticleDto, file, req.user.id);
 }
 
 @ApiOkResponse
@@ -61,7 +61,7 @@ findOne(@Param('id') id: string) {
 
 
 @UseGuards(AuthGuard, RolesGuard)
-  @Roles(RolesUser.ADMIN ,RolesUser.USER)
+  @Roles(RolesUser.ADMIN ,RolesUser.SUPERADMIN,RolesUser.USER)
 @ApiOkResponse({ description: "Updated" })
 @ApiNotFoundResponse({ description: "Article not found" })
 @HttpCode(200)
@@ -73,7 +73,7 @@ update(@Param('id') id: string, @Body() updateArticleDto: UpdateArticleDto) {
 
 
 @UseGuards(AuthGuard, RolesGuard)
-  @Roles(RolesUser.ADMIN ,RolesUser.SUPERADMIN)
+  @Roles(RolesUser.ADMIN ,RolesUser.SUPERADMIN, RolesUser.USER)
 @ApiOkResponse({ description: "Deleted" })
 @HttpCode(200)
 @Delete(':id')
