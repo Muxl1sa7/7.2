@@ -1,17 +1,24 @@
-import { Controller, Get, Post, Body, Patch, Param, Delete, HttpCode, UseInterceptors } from '@nestjs/common';
+import { Controller, Get, Post, Body, Patch, Param, Delete, HttpCode, UseInterceptors, UseGuards } from '@nestjs/common';
 import { CreateArticleDto } from './dto/create-article.dto';
 import { UpdateArticleDto } from './dto/update-article.dto';
-import { ApiBody, ApiInternalServerErrorResponse, ApiNotFoundResponse, ApiOkResponse } from '@nestjs/swagger';
+import { ApiBearerAuth, ApiBody, ApiInternalServerErrorResponse, ApiNotFoundResponse, ApiOkResponse } from '@nestjs/swagger';
 import { Article } from './entities/article.entity';
 import { diskStorage } from "multer"
 import { FileInterceptor } from '@nestjs/platform-express';
 import { filepathToName } from 'typeorm/util/PathUtils.js';
+import { AuthGuard } from 'src/common/guards/auth-guards';
+import { Roles } from 'src/common/decorators/roles.decarator';
+import { RolesUser } from 'src/shared/enums/roles.enum';
 
+
+@ApiBearerAuth("JWT-auth")
 @ApiInternalServerErrorResponse({ description: "Internal server error" })
 @Controller('article')
 export class ArticleController {
   constructor(private readonly articleService: ArticleService) { }
 
+  @UseGuards(AuthGuard, RolesGuard)
+  @Roles(RolesUser.ADMIN ,RolesUser.SUPERADMIN)
   @ApiOkResponse()
   @ApiBody({ type: createArticleFileDto })
   @HttpCode(201)
@@ -22,8 +29,10 @@ export class ArticleController {
     stronge: diskStorage({
       destination: path.join(process.cwd(), "uploads")
       filename: (req, file, cb) => {
-        const unique
-      }
+        const uniqueSuffix = `${file.originalname}${Data.now()}`
+        const ext = path.extname(file.originalname)
+        cb(null, `${uniqueSuffix}${ext}`)
+      },
     })
   })
 )
@@ -50,6 +59,9 @@ findOne(@Param('id') id: string) {
   return this.articleService.findOne(+id);
 }
 
+
+@UseGuards(AuthGuard, RolesGuard)
+  @Roles(RolesUser.ADMIN ,RolesUser.USER)
 @ApiOkResponse({ description: "Updated" })
 @ApiNotFoundResponse({ description: "Article not found" })
 @HttpCode(200)
@@ -59,6 +71,9 @@ update(@Param('id') id: string, @Body() updateArticleDto: UpdateArticleDto) {
 }
 
 
+
+@UseGuards(AuthGuard, RolesGuard)
+  @Roles(RolesUser.ADMIN ,RolesUser.SUPERADMIN)
 @ApiOkResponse({ description: "Deleted" })
 @HttpCode(200)
 @Delete(':id')
